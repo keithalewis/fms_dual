@@ -135,7 +135,7 @@ int test_black()
 
 	auto p = put(dual<X>(f, X(1)));
 	X z = log(k / f) / X(2) + s / X(2);
-	X delta = -N_0<X>(z - s);
+	X delta = -N_0<X>(z - s); // closed form
 	X err = p._1 - delta;
 	assert(abs(err) < std::numeric_limits<X>::epsilon());
 
