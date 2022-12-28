@@ -5,7 +5,7 @@ Compute derivatives to machine precision.
 Suppose $\epsilon \not= 0$ but $\epsilon^2 = 0$.
 By Taylor's theorem we have $f(x + \epsilon) = f(x) + f'(x) \epsilon$.
 
-__Exercise__. _If _$f(x) = x^2$_ then _$f'(x) = 2x$.
+__Exercise__. _If_ $f(x) = x^2$ _then_ $f'(x) = 2x$.
 
 _Hint_: $(x + \epsilon^2) = x^2 + 2x\epsilon + \epsilon^2$.
 
