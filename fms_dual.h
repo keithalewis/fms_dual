@@ -6,7 +6,7 @@
 namespace fms {
 
 	// x = _0 + _1 e
-	template<class X = double>
+	template<class X>
 	struct dual {
 		X _0, _1;
 
@@ -34,7 +34,7 @@ namespace fms {
 	};
 
 	// promote to dual function
-	template<class F, class dF, class X = double>
+	template<class F, class dF>
 	class _ {
 		F f;
 		dF df;
@@ -42,20 +42,22 @@ namespace fms {
 		_(F f, dF df)
 			: f{ f }, df{ df }
 		{ }
+		template<class X>
 		fms::dual<X> operator()(fms::dual<X> x)
 		{
-			return dual<X>(f(x._0), df(x._0)*x._1);
+			return fms::dual<X>(f(x._0), df(x._0)*x._1);
 		}
 	};
 
 	// F: dual<X> -> dual<X>
-	template<class F, class X = double>
+	template<class F>
 	class D {
 		F f;
 	public:
 		D(F f)
 			: f{ f }
 		{ }
+		template<class X>
 		X operator()(X x) const
 		{
 			auto df = [&](X x) { return f(dual<X>(x, X(1))); };
@@ -149,5 +151,7 @@ inline constexpr fms::dual<X> operator/(const fms::dual<X>& x, const X& y)
 template<class F, typename X>
 inline constexpr X _1(F f, const X& x)
 {
-	return f<X>(fms::dual<X>(x, 1))._1;
+	auto _x = fms::dual<X>(x, 1);
+
+	return f<fms::dual<X>(_x)._1;
 }

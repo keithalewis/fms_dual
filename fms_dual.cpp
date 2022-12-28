@@ -7,7 +7,7 @@
 using namespace fms;
 
 template<class X>
-int test_dual()
+constexpr int test_dual()
 {
 	{
 		dual<X> d;
@@ -80,10 +80,10 @@ int test_derivative()
 		auto _sq = _(sq<X>, dsq<X>);
 
 		for (X x = -2; x < 2; x += .1) {
-			auto sqx = sq(dual(x, 1));
+			auto sqx = sq(dual(x, X(1)));
 			assert(sqx._0 == x * x);
 			assert(sqx._1 == 2 * x);
-			auto _sqrx = _sq(fms::dual<X>(x, 1));
+			auto _sqrx = _sq(fms::dual<X>(x, X(1)));
 			assert(_sqrx._0 == sq(x));
 			assert(_sqrx._1 == dsq(x));
 		}
@@ -92,14 +92,15 @@ int test_derivative()
 	return 0;
 }
 int test_derivative_double = test_derivative<double>();
+int test_derivative_float = test_derivative<float>();
+
+
+#define M_SQRT2PI 2.5066282746310005024157652848110452530069867406099383166299235763
 
 template<class X>
-static X sqrt2pi = sqrt(2 * X(M_PI));
-
+inline auto N_0 = [](X x) { return (1 + erf(x / M_SQRT2PI)) / 2; };
 template<class X>
-inline auto N_0 = [](X x) { return (1 + erf(x / sqrt2pi<X>)) / 2; };
-template<class X>
-inline auto N_1 = [](X x) { return exp(-x * x / 2) / sqrt2pi<X>; };
+inline auto N_1 = [](X x) { return exp(-x * x / 2) / M_SQRT2PI; };
 // standard normal for dual numbers
 template<class X>
 inline auto _N = _(N_0<X>, N_1<X>);
@@ -120,6 +121,8 @@ int test_black()
 	X s = 0.1;
 	X k = 100;
 
+	auto lf = _N<X>(fms::dual<X>(s, X(1)));
+
 	// F <= k iff Z <= log(k/f)/s + s/2
 	auto moneyness = [&](dual<X> f) { return _log<X>(k / f) / s + s / X(2); };
 	auto put = [&](dual<X> f) {
@@ -130,8 +133,8 @@ int test_black()
 		return k * N - f * Ns;
 	};
 
-	auto p = put(dual<X>(f, 1));
-	X z = log(k / f) / 2 + s / 2;
+	auto p = put(dual<X>(f, X(1)));
+	X z = log(k / f) / X(2) + s / X(2);
 	X delta = -N_0<X>(z - s);
 	X err = p._1 - delta;
 	assert(abs(err) < std::numeric_limits<X>::epsilon());
@@ -139,7 +142,7 @@ int test_black()
 	return 0;
 }
 int test_black_double = test_black<double>();
-//int test_black_float = test_black<float>();
+int test_black_float = test_black<float>();
 
 int main()
 {
