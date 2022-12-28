@@ -15,6 +15,9 @@ is not zero.
 
 __Exercise__. _Show $\epsilon^2 = \begin{bmatrix}0 & 0 \\ 0 & 0 \end{bmatrix}$_.
 
+
+## Unfiled
+
 ```
 norm(a + be) = max(sqrt(-b sqrt(4 a^2 + b^2) + 2 a^2 + b^2)/sqrt(2),
                    sqrt(b sqrt(4 a^2 + b^2) + 2 a^2 + b^2)/sqrt(2))

@@ -33,6 +33,37 @@ namespace fms {
 
 	};
 
+	// promote to dual function
+	template<class F, class dF, class X = double>
+	class _ {
+		F f;
+		dF df;
+	public:
+		_(F f, dF df)
+			: f{ f }, df{ df }
+		{ }
+		fms::dual<X> operator()(fms::dual<X> x)
+		{
+			return dual<X>(f(x._0), df(x._0)*x._1);
+		}
+	};
+
+	// F: dual<X> -> dual<X>
+	template<class F, class X = double>
+	class D {
+		F f;
+	public:
+		D(F f)
+			: f{ f }
+		{ }
+		X operator()(X x) const
+		{
+			auto df = [&](X x) { return f(dual<X>(x, X(1))); };
+
+			return df(x)._1;
+		}
+	};
+
 } // namespace fms
 
 template<typename X>
@@ -40,39 +71,83 @@ inline constexpr fms::dual<X> operator+(const fms::dual<X>& x, const fms::dual<X
 {
 	return fms::dual(x._0 + y._0, x._1 + y._1);
 }
+template<typename X>
+inline constexpr fms::dual<X> operator+(const X& x, const fms::dual<X>& y)
+{
+	return fms::dual(x + y._0, y._1);
+}
+template<typename X>
+inline constexpr fms::dual<X> operator+(const fms::dual<X>& x, const X& y)
+{
+	return fms::dual(x._0 + y, x._1);
+}
+
 // negative of a dual number
 template<typename X>
 inline constexpr fms::dual<X> operator-(const fms::dual<X>& x)
 {
 	return fms::dual(-x._0, -x._1);
 }
-template<typename X>
-inline constexpr fms::dual<X> operator-(const fms::dual<X>& a, const fms::dual<X>& b)
-{
-	return a + -b;
-}
-template<typename X>
-inline constexpr fms::dual<X> operator*(const fms::dual<X>& a, const fms::dual<X>& b)
-{
-	return fms::dual(a._0 * b._0, a._0 * b._1 + a._1 * b._0);
-}
-
-// inverse of a dual number, a*inv(a) == dual(1, 0) == inv(a)*a
-template<typename X>
-inline constexpr fms::dual<X> inv(const fms::dual<X>& a)
-{
-	return fms::dual(1 / a._0, -a._1 / (a._0 * a._0));
-}
 
 template<typename X>
-inline constexpr fms::dual<X> operator/(const fms::dual<X>& a, const fms::dual<X>& b)
+inline constexpr fms::dual<X> operator-(const fms::dual<X>& x, const fms::dual<X>& y)
 {
-	return a * inv(b);
+	return fms::dual(x._0 - y._0, x._1 - y._1);
 }
+template<typename X>
+inline constexpr fms::dual<X> operator-(const X& x, const fms::dual<X>& y)
+{
+	return fms::dual(x - y._0, -y._1);
+}
+template<typename X>
+inline constexpr fms::dual<X> operator-(const fms::dual<X>& x, const X& y)
+{
+	return fms::dual(x._0 - y, x._1);
+}
+
+template<typename X>
+inline constexpr fms::dual<X> operator*(const fms::dual<X>& x, const fms::dual<X>& y)
+{
+	return fms::dual(x._0 * y._0, x._0 * y._1 + x._1 * y._0);
+}
+template<typename X>
+inline constexpr fms::dual<X> operator*(const X& x, const fms::dual<X>& y)
+{
+	return fms::dual(x * y._0, x * y._1);
+}
+template<typename X>
+inline constexpr fms::dual<X> operator*(const fms::dual<X>& x, const X& y)
+{
+	return fms::dual(x._0 * y, x._1 * y);
+}
+
+// inverse of a dual number, x*inv(x) == dual(1, 0) == inv(x)*x
+template<typename X>
+inline constexpr fms::dual<X> inv(const fms::dual<X>& x)
+{
+	return fms::dual(1 / x._0, -x._1 / (x._0 * x._0));
+}
+
+template<typename X>
+inline constexpr fms::dual<X> operator/(const fms::dual<X>& x, const fms::dual<X>& y)
+{
+	return x * inv(y);
+}
+template<typename X>
+inline constexpr fms::dual<X> operator/(const X& x, const fms::dual<X>& y)
+{
+	return x * inv(y);
+}
+template<typename X>
+inline constexpr fms::dual<X> operator/(const fms::dual<X>& x, const X& y)
+{
+	return fms::dual(x._0/y, x._1/y);
+}
+
 
 // derivative of f at x, f(x + e) = f(x) + f'(x) e
 template<class F, typename X>
-inline constexpr X _1(const F& f, const X& x)
+inline constexpr X _1(F f, const X& x)
 {
-	return f(fms::dual<X>(x, 1))._1;
+	return f<X>(fms::dual<X>(x, 1))._1;
 }
