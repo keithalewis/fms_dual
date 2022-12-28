@@ -72,14 +72,14 @@ int test_derivative()
 		// derivative of sq
 		auto Dsq = D(sq<fms::dual<X>>);
 
-		for (X x = -2; x < 2; x += .1) {
+		for (X x = -2; x < 2; x += X(.1)) {
 			assert(Dsq(x) == 2 * x);
 		}
 	}
 	{
 		auto _sq = _(sq<X>, dsq<X>);
 
-		for (X x = -2; x < 2; x += .1) {
+		for (X x = -2; x < 2; x += X(.1)) {
 			auto sqx = sq(dual(x, X(1)));
 			assert(sqx._0 == x * x);
 			assert(sqx._1 == 2 * x);
@@ -97,19 +97,24 @@ int test_derivative_float = test_derivative<float>();
 
 #define M_SQRT2PI 2.5066282746310005024157652848110452530069867406099383166299235763
 
+// standard normal cumulative distribtion
 template<class X>
-inline auto N_0 = [](X x) { return (1 + erf(x / M_SQRT2PI)) / 2; };
+inline auto N_0 = [](X x) { return X((1 + erf(x / M_SQRT2PI)) / 2); };
+
+// stanard normal density
 template<class X>
-inline auto N_1 = [](X x) { return exp(-x * x / 2) / M_SQRT2PI; };
-// standard normal for dual numbers
+inline auto N_1 = [](X x) { return X(exp(-x * x / 2) / M_SQRT2PI); };
+
+// standard normal cumulative for dual numbers
 template<class X>
 inline auto _N = _(N_0<X>, N_1<X>);
 
 template<class X>
-inline auto _log = _([](X x) { return log(x); }, [](X x) { return 1 / x; });
-
-template<class X>
-inline auto _exp = _([](X x) { return exp(x); }, [](X x) { return exp(x); });
+int test_log()
+{
+	return 0;
+}
+int test_log_double = test_log<double>();
 
 template<class X>
 int test_black()
@@ -118,9 +123,8 @@ int test_black()
 	// put value E[(k - F)^+ = k P(F <= k) - f P_s(F <= k), P_s(Z <= z) = P(Z <= z - s)
 
 	X f = 100;
-	X s = 0.1;
+	X s = X(0.1);
 	X k = 100;
-
 	auto lf = _N<X>(fms::dual<X>(s, X(1)));
 
 	// F <= k iff Z <= log(k/f)/s + s/2
@@ -134,11 +138,12 @@ int test_black()
 	};
 
 	auto p = put(dual<X>(f, X(1)));
-	X z = log(k / f) / X(2) + s / X(2);
+	// (d/df) E[(k - F)^+] = E[1(F <= k) F/f] = P_s(F <= k)
+	X z = log(k / f) / 2 + s / 2;
 	X delta = -N_0<X>(z - s); // closed form
 	X err = p._1 - delta;
 	assert(abs(err) < std::numeric_limits<X>::epsilon());
-
+	
 	return 0;
 }
 int test_black_double = test_black<double>();
