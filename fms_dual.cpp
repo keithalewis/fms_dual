@@ -24,8 +24,10 @@ int test_dual()
 	}
 	{
 		dual<X> d(2, 3);
-		auto i = d * inv(d);
-		assert(i == 1);
+		auto i_ = d * inv(d);
+		assert(i_ == 1);
+		auto _i = inv(d) * d;
+		assert(_i == 1);
 	}
 	{
 		assert(-dual<X>(1, 2) == dual<X>(-1, -2));
