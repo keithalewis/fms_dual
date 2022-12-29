@@ -26,11 +26,18 @@ just like `std::complex`.
 A function `X f(X)` can be promoted to a function `dual<X> _f(dual<X>)`
 if its derivative is known since 
 $f(x_0 + x_1 \epsilon) = f(x_0) + f'(x_0)x_1\epsilon$.
-Use `auto _f = _f(f, df)` where `df` is the derivative.
+Use `auto _f = _(f, df)` where `df` is the derivative.
 
 Dual number definitions are provide for some standard functions, e.g.,
 `template<class X> _log = _([](X x) { return log(x); }, [](X x) { return -1/x; });`.
 
-## Unfiled
+__Exercise__. _Implement_ `_N(dual<X>)` _for the standard normal distribution_.
 
-```
+_Hint_: $N(x) = (1 + \erf(x / \sqrt{2\pi}) / 2)$ is the standard normal
+cumulative distribution in terms of the C standard libary
+[`erf`](https://en.cppreference.com/w/c/numeric/math/erf) and
+$N'(x) = \exp(-x^2/2)/\sqrt{2\pi}
+
+Dual numbers have far less machinery than Automatic Differentiation.
+
+## Unfiled
