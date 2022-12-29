@@ -30,7 +30,7 @@ Use `auto _f = _(f, df)` where `df` is the derivative.
 
 Dual number definitions are provide for some standard functions, e.g.,
 ```
-	template<class X> _log = _([](X x) { return log(x); }, [](X x) { return -1/x; });
+template<class X> _log = _([](X x) { return log(x); }, [](X x) { return -1/x; });
 ```
 
 __Exercise__. _Implement_ `_N(dual<X>)` _for the standard normal distribution_.
