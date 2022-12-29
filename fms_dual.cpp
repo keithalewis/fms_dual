@@ -137,12 +137,13 @@ int test_black()
 		return k * N - f * Ns;
 	};
 
-	auto p = put(dual<X>(f, X(1)));
+	dual<X> v = put(dual<X>(f, X(1)));
+
 	// (d/df) E[(k - F)^+] = E[1(F <= k) F/f] = P_s(F <= k)
 	X z = log(k / f) / 2 + s / 2;
 	X delta = -N_0<X>(z - s); // closed form
-	X err = p._1 - delta;
-	assert(abs(err) < std::numeric_limits<X>::epsilon());
+
+	assert(abs(v._1 - delta) < std::numeric_limits<X>::epsilon());
 	
 	return 0;
 }
