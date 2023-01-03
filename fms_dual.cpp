@@ -125,7 +125,6 @@ int test_black()
 	X f = 100;
 	X s = X(0.1);
 	X k = 100;
-	auto lf = _N<X>(fms::dual<X>(s, X(1)));
 
 	// F <= k iff Z <= log(k/f)/s + s/2
 	auto moneyness = [&](dual<X> f) { return _log<X>(k / f) / s + s / X(2); };
