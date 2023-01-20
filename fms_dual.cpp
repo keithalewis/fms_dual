@@ -94,6 +94,18 @@ int test_derivative()
 int test_derivative_double = test_derivative<double>();
 int test_derivative_float = test_derivative<float>();
 
+template<class X>
+int test_derivative2()
+{
+	{
+		D2 d2(sq<X>);
+		X x{ 1 };
+		X y = d2(x);
+	}
+
+	return 0;
+}
+int test_derivative2_double = test_derivative2<double>();
 
 #define M_SQRT2PI 2.5066282746310005024157652848110452530069867406099383166299235763
 

@@ -51,6 +51,7 @@ namespace fms {
 		_(F f, dF df)
 			: f{ f }, df{ df }
 		{ }
+		// f(x0 + x1 e) = f(x0) + f'(x0) x1 e
 		template<std::floating_point X>
 		fms::dual<X> operator()(fms::dual<X> x)
 		{
@@ -70,9 +71,26 @@ namespace fms {
 		template<std::floating_point X>
 		X operator()(X x) const
 		{
-			auto df = [&](X x) { return f(dual<X>(x, X(1))); };
+			return f(dual<X>(x, X(1)))._1;
+		}
+	};
 
-			return df(x)._1;
+	// second derivative
+	// f:dual<X> -> dual<X>
+	template<class F>
+	class D2 {
+		F f;
+		D<F> df;
+	public:
+		D2(F f)
+			: f{ f }, df{ D<F>(f) }
+		{ }
+		template<std::floating_point X>
+		X operator()(X x) const
+		{
+			_ f2(f, df);
+
+			return 0;// f2(dual<X>(x, X(1)))._1;
 		}
 	};
 
