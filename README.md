@@ -21,7 +21,7 @@ to the dual number $x = x_0 + x_1 \epsilon$.
 Unary negation and `inv`erse are definded in the global namespace
 as are all the arithmetic operations and their overloads
 for scalar operands. This allows dual numbers to be used
-just like `std::complex`.
+just like [`std::complex`](https://en.cppreference.com/w/cpp/numeric/complex).
 
 A function `X f(X)` can be promoted to a function `dual<X> _f(dual<X>)`
 if its derivative is known since 
