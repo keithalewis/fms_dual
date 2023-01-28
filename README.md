@@ -20,7 +20,7 @@ The `template<class X> struct fms::dual { X _0, _1; }` corresponds
 to the dual number $x = x_0 + x_1 \epsilon$.
 Unary negation and `inv`erse are definded in the global namespace
 as are all the arithmetic operations and their overloads
-of scalar operands. This allows dual numbers to be used
+for scalar operands. This allows dual numbers to be used
 just like `std::complex`.
 
 A function `X f(X)` can be promoted to a function `dual<X> _f(dual<X>)`
