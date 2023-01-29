@@ -30,6 +30,11 @@ constexpr int test_dual()
 		assert(_i == 1);
 	}
 	{
+		dual<X> e(0, 1);
+		assert(e != 0);
+		assert(e * e == 0);
+	}
+	{
 		assert(-dual<X>(1, 2) == dual<X>(-1, -2));
 
 		assert(dual<X>(1, 2) + dual<X>(3,4) == dual<X>(4, 6));
@@ -95,12 +100,35 @@ int test_derivative_double = test_derivative<double>();
 int test_derivative_float = test_derivative<float>();
 
 template<class X>
+inline X cu(const X& x)
+{
+	return x * x * x;
+}
+template<class X>
+inline X dcu(const X& x)
+{
+	return X(3) * x * x;
+}
+
+// second derivative
+template<class X>
 int test_derivative2()
 {
 	{
-		D2 d2(sq<X>);
-		X x{ 1 };
-		X y = d2(x);
+		auto _cu = _(cu<X>, dcu<X>);
+		dual<X> _x(1, 1);
+		auto _cux = _cu(_x); // [1, 3; 0, 1]
+		assert(_cux._0 == 1);
+		assert(_cux._1 == 3);
+
+		auto Dcu = D(cu<dual<X>>);
+		for (const X& x : { X(-1), X(0), X(.1) }) {
+			assert(Dcu(x) == dcu(x));
+		}
+
+		auto D2cu = _(cu<dual<X>>, D(cu<dual<X>>));
+		dual<dual<X>> __x(_x, dual<X>(1));
+		//auto __D2cu = D2cu(__x);
 	}
 
 	return 0;

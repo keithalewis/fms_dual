@@ -5,16 +5,15 @@
 
 namespace fms {
 
-	// x = _0 + _1 e
-	template<std::floating_point X>
+	// x = _0 + _1 e where e != 0 and e*e = 0
+	template<class X>
 	struct dual {
 		X _0, _1;
-
-		constexpr dual(const X& _0 = 0, const X& _1 = 0)
+		constexpr dual(const X& _0 = 0, const X& _1 = 0) noexcept
 			: _0(_0), _1(_1)
 		{ }
-		template<std::floating_point Y, std::floating_point Z>
-		constexpr dual(const Y& _0 = 0, const Z& _1 = 0)
+		template<class Y, class Z>
+		constexpr dual(const Y& _0, const Z& _1)
 			: dual(X(_0), X(_1))
 		{ }
 		dual(const dual&) = default;
@@ -22,37 +21,42 @@ namespace fms {
 		~dual()
 		{ }
 
-		constexpr bool operator==(const dual& x) const
-		{
-			return _0 == x._0 and _1 == x._1;
-		}
-		constexpr bool operator!=(const dual& x) const
-		{
-			return !operator==(x);
-		}
+		constexpr bool operator==(const dual& x) const = default;
 
-		// operator norm || [x_0 x_1; 0 x_1] ||
-		X norm() const
+		X norm2() const
 		{
-			X c = 2 * _0 * _0 + _1 * _1;
-			X d = sqrt(2 * _0 * _0 + c);
-
-			return std::max(sqrt(-_1 * d + c), sqrt(_1 * d) + c) / sqrt(2);
+			return _0 * _0 + _1 * _1;
 		}
-
 	};
 
-	// promote to dual function
+	template<class X>
+	inline X norm2(const dual<X>& x)
+	{
+		return x.norm2();
+	}
+
+	// operator norm || [x_0 x_1; 0 x_0] ||
+	template<class X>
+	inline X norm(const dual<X>& x)
+	{
+		X c = 2 * x._0 * x._0 + x._1 * x._1;
+		X d = sqrt(2 * x._0 * x._0 + c);
+
+		return std::max(sqrt(-x._1 * d + c), sqrt(x._1 * d) + c) / sqrt(X(2));
+	}
+
+	// promote to dual function given function and first derivative
 	template<class F, class dF>
 	class _ {
 		F f;
 		dF df;
 	public:
+		_() { }
 		_(F f, dF df)
 			: f{ f }, df{ df }
 		{ }
 		// f(x0 + x1 e) = f(x0) + f'(x0) x1 e
-		template<std::floating_point X>
+		template<class X>
 		fms::dual<X> operator()(fms::dual<X> x)
 		{
 			return fms::dual<X>(f(x._0), df(x._0)*x._1);
@@ -68,29 +72,10 @@ namespace fms {
 		D(F f)
 			: f{ f }
 		{ }
-		template<std::floating_point X>
+		template<class X>
 		X operator()(X x) const
 		{
 			return f(dual<X>(x, X(1)))._1;
-		}
-	};
-
-	// second derivative
-	// f:dual<X> -> dual<X>
-	template<class F>
-	class D2 {
-		F f;
-		D<F> df;
-	public:
-		D2(F f)
-			: f{ f }, df{ D<F>(f) }
-		{ }
-		template<std::floating_point X>
-		X operator()(X x) const
-		{
-			_ f2(f, df);
-
-			return 0;// f2(dual<X>(x, X(1)))._1;
 		}
 	};
 
