@@ -73,7 +73,7 @@ namespace fms {
 			: f{ f }
 		{ }
 		template<class X>
-		X operator()(X x) const
+		X operator()(X x)
 		{
 			return f(dual<X>(x, X(1)))._1;
 		}

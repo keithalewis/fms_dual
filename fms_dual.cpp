@@ -93,6 +93,15 @@ int test_derivative()
 			assert(_sqrx._1 == dsq(x));
 		}
 	}
+	{
+		auto _sq = _(sq<X>, dsq<X>);
+		auto D_sq = D(_sq);
+		assert(2*3 == D_sq(X(3)));
+		auto D2_sq = D(D_sq);
+		X x;
+		x = D2_sq(X(3));
+		x = x;
+	}
 
 	return 0;
 }
