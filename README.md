@@ -53,7 +53,7 @@ template<class X> _log = _([](X x) { return log(x); }, [](X x) { return -1/x; })
 
 __Exercise__. _Implement_ `_N(dual<X>)` _for the standard normal distribution_.
 
-_Hint_: $N(x) = (1 + \operatorname{erf}(x / \sqrt{2}) / 2)$ is the standard normal
+_Hint_: $N(x) = (1 + \operatorname{erf}(x / \sqrt{2})) / 2$ is the standard normal
 cumulative distribution in terms of the C standard libary
 [`erf`](https://en.cppreference.com/w/c/numeric/math/erf) and
 $N'(x) = \exp(-x^2/2)/\sqrt{2\pi}$.
