@@ -135,8 +135,8 @@ int test_derivative2()
 			assert(Dcu(x) == dcu(x));
 		}
 
-		auto D2cu = _(cu<dual<X>>, D(cu<dual<X>>));
-		dual<dual<X>> __x(_x, dual<X>(1));
+		//auto D2cu = _(cu<dual<X>>, D(cu<dual<X>>));
+		//dual<dual<X>> __x(_x, dual<X>(1));
 		//auto __D2cu = D2cu(__x);
 	}
 

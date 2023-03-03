@@ -2,6 +2,7 @@
 #pragma once
 #include <cmath>
 #include <concepts>
+#include <initializer_list>
 
 namespace fms {
 

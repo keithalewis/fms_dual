@@ -2,6 +2,24 @@
 
 Compute derivatives to machine precision.
 
+## Build
+
+Requires gcc version 11.1.0 or later.
+
+```
+$ git clone https://github.com/keithalewis/fms_dual
+$ cd fms_dual
+$ make
+```
+
+## Run
+
+```
+$ make test
+```
+
+## Dual Numbers
+
 Suppose $\epsilon \not= 0$ but $\epsilon^2 = 0$.
 By Taylor's theorem we have $f(x + \epsilon) = f(x) + f'(x) \epsilon$.
 
