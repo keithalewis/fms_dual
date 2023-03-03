@@ -148,7 +148,7 @@ int test_derivative2_double = test_derivative2<double>();
 
 // standard normal cumulative distribtion
 template<class X>
-inline auto N_0 = [](X x) { return X((1 + erf(x / M_SQRT2PI)) / 2); };
+inline auto N_0 = [](X x) { return X((1 + erf(x / M_SQRT2)) / 2); };
 
 // stanard normal density
 template<class X>
@@ -191,7 +191,8 @@ int test_black()
 	X z = log(k / f) / 2 + s / 2;
 	X delta = -N_0<X>(z - s); // closed form
 
-	assert(abs(v._1 - delta) < std::numeric_limits<X>::epsilon());
+	X err = v._1 - delta;
+	assert(abs(err) <= std::numeric_limits<X>::epsilon());
 	
 	return 0;
 }
