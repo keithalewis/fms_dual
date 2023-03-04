@@ -2,7 +2,10 @@
 #include <cassert>
 #define _USE_MATH_DEFINES
 #include <cmath>
+#include <chrono>
+#include <iostream>
 #include "fms_dual.h"
+#include "fms_timer.h"
 
 using namespace fms;
 
@@ -78,7 +81,7 @@ int test_derivative()
 		auto Dsq = D(sq<fms::dual<X>>);
 
 		for (X x = -2; x < 2; x += X(.1)) {
-			assert(Dsq(x) == 2 * x);
+			assert(Dsq(x) == dsq(x));
 		}
 	}
 	{
@@ -159,13 +162,6 @@ template<class X>
 inline auto _N = _(N_0<X>, N_1<X>);
 
 template<class X>
-int test_log()
-{
-	return 0;
-}
-int test_log_double = test_log<double>();
-
-template<class X>
 int test_black()
 {
 	// F = f exp(s Z - s^2/2), Z standard normal
@@ -199,7 +195,29 @@ int test_black()
 int test_black_double = test_black<double>();
 int test_black_float = test_black<float>();
 
+template<class X>
+inline void dq(unsigned n)
+{
+	while (n--) {
+		X dcu = (cu(X(1) + X(1)/n) - cu(X(1) - X(1) / n))/(X(2)/n);
+	}
+}
+template<class X>
+inline void dd(unsigned n)
+{
+	auto _cu = _(cu<X>, dcu<X>);
+	while (n--) {
+		dual<X> dcu = _cu(dual<X>(1, X(1)/n));
+	}
+}
 int main()
 {
+	{
+		unsigned n = 1000000;
+
+		std::cout << fms::timer(dq<double>, n) << '\n';
+		std::cout << fms::timer(dd<double>, n) << '\n';
+	}
+
 	return 0;
 }

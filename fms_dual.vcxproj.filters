@@ -18,6 +18,9 @@
     <ClInclude Include="fms_dual.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="fms_timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fms_dual.cpp">

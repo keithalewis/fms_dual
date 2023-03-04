@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="fms_dual.h" />
+    <ClInclude Include="fms_timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fms_dual.cpp" />
